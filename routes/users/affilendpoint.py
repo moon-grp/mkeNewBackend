@@ -37,16 +37,6 @@ class logIn(BaseModel):
     password: str
 
 
-"""""
-def create_token(data: dict, expire_delta: timedelta):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + expire_delta
-    to_encode.update({"exp": expire})
-    encodeJwt = jwt.encode(to_encode, token_secret, algorithm=token_algorithm)
-    return encodeJwt
-"""""
-
-
 @aff.post("/signup", tags=["users-affill"])
 async def create_account(details: Newaccount, token: str = Depends(auth_handler.auth_wrapper)):
     if validators.email(details.email) != True:
@@ -75,6 +65,8 @@ async def login_account(details: logIn):
             password, checkE["password"])
         if passwordCheck:
             token = auth_handler.encode_token(email)
+            d = auth_handler.decode_token(token)
+            print(d)
 
             return{"access_token": token, "token_type": "bearer"}
         else:

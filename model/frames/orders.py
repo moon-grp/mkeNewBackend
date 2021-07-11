@@ -2,6 +2,8 @@ from mongoengine import Document, StringField, DecimalField, URLField, BooleanFi
 from mongoengine import connect, disconnect
 from dotenv import load_dotenv
 import os
+
+from mongoengine.fields import DictField
 load_dotenv()
 
 
@@ -16,10 +18,10 @@ class Orders(Document):
     CustomerEmail = EmailField()
     CustomerPhone = IntField()
     CustomerAddress = StringField()
-    Date = DateField()
+    Date = StringField()
     ProductName = StringField()
     Quantity = IntField()
-    Data = ObjectIdField()
+    Data = DictField()
     delivered = BooleanField()
 
 
