@@ -1,3 +1,6 @@
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from config.email import Mail
 from fastapi import APIRouter, File, UploadFile, Form
 from model.frames.orders import Orders
@@ -8,9 +11,6 @@ import requests
 import os
 from dotenv import load_dotenv
 load_dotenv()
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
 order = APIRouter()
 paystack = os.getenv("pAPI_KEY")
@@ -21,15 +21,15 @@ emailPassword = os.getenv("BASE_P")
 
 
 conf = ConnectionConfig(
-   MAIL_USERNAME=emailAddress,
-   MAIL_PASSWORD=emailPassword,
-   MAIL_PORT=587,
-   MAIL_SERVER="smtp.gmail.com",
-   MAIL_TLS=True,
-   MAIL_SSL=False,
-   MAIL_FROM=emailAddress,
-   MAIL_FROM_NAME="Mr kay enterprise",
-   TEMPLATE_FOLDER='./templates'
+    MAIL_USERNAME=emailAddress,
+    MAIL_PASSWORD=emailPassword,
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    MAIL_FROM=emailAddress,
+    MAIL_FROM_NAME="Mr kay enterprise",
+    TEMPLATE_FOLDER='./templates'
 )
 
 template = """
@@ -44,11 +44,12 @@ template = """
         """
 
 message = MessageSchema(
-       subject="Fastapi-Mail module",
-       recipients=["olumidemm@gmail.com"],
-       body= "ol",
-       subtype="html"
-       )
+    subject="Fastapi-Mail module",
+    recipients=["olumidemm@gmail.com"],
+    body="ol",
+    subtype="html"
+)
+
 
 class Payframe(BaseModel):
     CustomerName: str
@@ -91,6 +92,7 @@ async def pay_for_frame(details: Payframe):
     )
 
     theorder.save()
+    await emailhandler.ordernotification()
 
     return {"message": "transaction successful..."}
 
@@ -105,8 +107,6 @@ async def process_order(id):
     getemail = getprod["CustomerEmail"]
     getname = getprod["CustomerName"]
 
-    #fm = FastMail(conf)
     await emailhandler.ordermail(getemail, getname)
-    #await fm.send_message(message, template_name='email.html')
 
     return {"message": "customer notified..."}

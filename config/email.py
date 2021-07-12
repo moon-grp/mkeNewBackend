@@ -24,11 +24,20 @@ class Mail():
 
     fm = FastMail(conf)
 
-    async def ordermail(self, mail , name):
+    async def ordermail(self, mail, name):
         message = MessageSchema(
-            subject="Frame Order",
+            subject="Frame Order Notification",
             recipients=[mail],
             body=f"Hi {name}, your order is processing. you should recieve it in 2-3 days.",
+            subtype="html"
+        )
+        await self.fm.send_message(message, template_name='email.html')
+
+    async def ordernotification(self):
+        message = MessageSchema(
+            subject="Frame Order",
+            recipients=["mrkayenterprise@gmail.com"],
+            body=f"New Order just came in check dashboard.",
             subtype="html"
         )
         await self.fm.send_message(message, template_name='email.html')
