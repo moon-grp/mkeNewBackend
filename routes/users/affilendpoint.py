@@ -6,6 +6,7 @@ from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
 from pydantic.networks import EmailStr
 from model.frames.frames import Frames
 from model.users.createaccount import Affil
+from model.autos.cars import Cars
 import json
 from bson.objectid import ObjectId
 from pydantic import BaseModel
@@ -65,8 +66,6 @@ async def login_account(details: logIn):
             password, checkE["password"])
         if passwordCheck:
             token = auth_handler.encode_token(email)
-            d = auth_handler.decode_token(token)
-            print(d)
 
             return{"access_token": token, "token_type": "bearer"}
         else:
@@ -76,3 +75,25 @@ async def login_account(details: logIn):
     except Affil.DoesNotExist:
         raise HTTPException(
             status_code=400, detail="invalid email or password")
+
+
+@aff.get("/affiliate/viewcardetails/{id}", tags=["users-affill"])
+async def aff_view_details(id, token: str = Depends(auth_handler.auth_wrapper)):
+    try:
+        checkE = json.loads(Affil.objects.get(email=token).to_json())
+        username = checkE["username"]
+        querylink = f"http://localhost:3000/autos/affiliates/garage/{ObjectId(id)}?ref={username}"
+        getCar = Cars.objects.get(id=ObjectId(id))
+        carDetails = {
+            "carname": getCar.carname,
+            "carprice": getCar.carprice,
+            "description": getCar.description,
+            "location": getCar.location,
+            "available": getCar.available,
+            "mediaUrl": getCar.mediaUrl,
+            "commission": getCar.commission,
+            "refLink": querylink
+        }
+        return carDetails
+    except:
+        raise HTTPException(status_code=401, detail="unauthorized")
