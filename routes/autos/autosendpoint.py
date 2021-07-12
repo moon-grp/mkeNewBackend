@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, Form
+from fastapi import APIRouter, File, UploadFile, Form, Depends
 from model.autos.cars import Cars
 import json
 from bson.objectid import ObjectId
@@ -7,9 +7,11 @@ import os
 from dotenv import load_dotenv
 import cloudinary as cloud
 from cloudinary import uploader as uploadit
+from config.adminauth import AuthHandler
 load_dotenv()
 
 auto = APIRouter()
+auth_handler = AuthHandler()
 
 cloudName = os.getenv("CLOUD_NAME")
 clouddApiKey = os.getenv("API_KEY")
@@ -21,14 +23,14 @@ cloud.config(cloud_name=cloudName,
 
 
 @auto.get("/viewcars", tags=["admin-autos"])
-async def view_car():
+async def view_car(token: str = Depends(auth_handler.auth_wrapper)):
     thecars = Cars.objects().to_json()
     result = json.loads(thecars)
     return {"cars": result}
 
 
 @auto.get("/viewcardetails/{id}", tags=["admin-autos"])
-async def view_car_details(id):
+async def view_car_details(id, token: str = Depends(auth_handler.auth_wrapper)):
     getCar = Cars.objects.get(id=ObjectId(id))
     carDetails = {
         "carname": getCar.carname,
@@ -43,7 +45,7 @@ async def view_car_details(id):
 
 
 @auto.delete("/deletecar/{id}", tags=["admin-autos"])
-async def delete_car(id):
+async def delete_car(id, token: str = Depends(auth_handler.auth_wrapper)):
     getCar = Cars.objects.get(id=ObjectId(id))
     getCar.delete()
     return{"message": "car deleted"}
@@ -57,7 +59,9 @@ async def create_post(
     commission: str = Form(...),
     location: str = Form(...),
 
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    token: str = Depends(auth_handler.auth_wrapper)
+
 ):
     uploadToCloud = uploadit.upload(file.file, )
     getImageUrl = uploadToCloud["url"]
@@ -84,7 +88,8 @@ async def update_car(id,
                      description: str = Form(...),
                      commission: str = Form(...),
                      location: str = Form(...),
-                     file: UploadFile = File(...)):
+                     file: UploadFile = File(...),
+                     token: str = Depends(auth_handler.auth_wrapper)):
 
     getCar = Cars.objects.get(id=ObjectId(id))
     uploadToCloud = uploadit.upload(file.file, )

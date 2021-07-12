@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, Form
+from fastapi import APIRouter, File, UploadFile, Form, Depends
 from model.frames.frames import Frames
 import json
 from bson.objectid import ObjectId
@@ -8,8 +8,10 @@ from cloudinary import uploader as uploadit
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from config.adminauth import AuthHandler
 
 
+auth_handler = AuthHandler()
 cloudName = os.getenv("CLOUD_NAME")
 clouddApiKey = os.getenv("API_KEY")
 cloudApiSecret = os.getenv("API_SECRET")
@@ -22,14 +24,14 @@ cloud.config(cloud_name=cloudName,
 
 
 @frame.get("/getallproducts", tags=["admin-frames"])
-async def get_all_prod():
+async def get_all_prod(token: str = Depends(auth_handler.auth_wrapper)):
     product = Frames.objects().to_json()
     fproduct = json.loads(product)
     return {"products": fproduct}
 
 
 @frame.get("/getproduct/{id}", tags=["admin-frames"])
-async def get_prod(id):
+async def get_prod(id, token: str = Depends(auth_handler.auth_wrapper)):
     prod = Frames.objects.get(id=ObjectId(id))
     Prod_details = {
         "name": prod.productname,
@@ -44,7 +46,7 @@ async def get_prod(id):
 
 
 @frame.delete("/deleteproduct/{id}", tags=["admin-frames"])
-async def delete_prod(id):
+async def delete_prod(id, token: str = Depends(auth_handler.auth_wrapper)):
     prod = Frames.objects.get(id=ObjectId(id))
     prod.delete()
     return {"message": "Product deleted.."}
@@ -63,7 +65,8 @@ async def add_product(productname: str = Form(...),
                       slashprice: int = Form(...),
                       description: str = Form(...),
 
-                      file: UploadFile = File(...)):
+                      file: UploadFile = File(...),
+                      token: str = Depends(auth_handler.auth_wrapper)):
 
     uploadToCloud = uploadit.upload(file.file, )
     getImageUrl = uploadToCloud["url"]
@@ -89,7 +92,8 @@ async def update_product(id,
                          frameprice: int = Form(...),
                          slashprice: int = Form(...),
                          description: str = Form(...),
-                         file: UploadFile = File(...)):
+                         file: UploadFile = File(...),
+                         token: str = Depends(auth_handler.auth_wrapper)):
 
     prod = Frames.objects.get(id=ObjectId(id))
 
