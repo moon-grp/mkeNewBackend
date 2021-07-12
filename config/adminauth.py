@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+email = os.getenv("EMAIL")
 
-
-token_secret = os.getenv("JWT_aff_KEY")
+token_secret = os.getenv("JWT_aff_KEY2")
 o_pass = os.getenv("PASSCODE")
 
 
@@ -21,13 +21,14 @@ class AuthHandler():
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     secret = token_secret
 
-    def get_password_hash(self, password):
-        return self.pwd_context.hash(password)
+    def get_password_hash(self):
+        return self.pwd_context.hash(o_pass)
 
-    def verify_password(self, plain_password, hash_password):
-        return self.pwd_context.verify(plain_password, hash_password)
+    def verify_password(self, plain_password):
+        hash= self.get_password_hash()
+        return self.pwd_context.verify(plain_password, hash)
 
-    def encode_token(self, email):
+    def encode_token(self):
         payload = {
             "exp": datetime.utcnow() + timedelta(days=0, minutes=30),
             "iat": datetime.utcnow(),
