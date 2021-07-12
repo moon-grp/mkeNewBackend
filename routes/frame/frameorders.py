@@ -1,4 +1,4 @@
-from config.email import Sendmail
+from config.email import Mail
 from fastapi import APIRouter, File, UploadFile, Form
 from model.frames.orders import Orders
 import json
@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 
 order = APIRouter()
 paystack = os.getenv("pAPI_KEY")
-emailhandler = Sendmail()
+emailhandler = Mail()
 
 emailAddress = os.getenv("BASE_EMAIL")
 emailPassword = os.getenv("BASE_P")
@@ -96,14 +96,17 @@ async def pay_for_frame(details: Payframe):
 
 
 @order.post("/processorder/{id}", tags=["admin-frames-orders"])
-async def process_order(id, email: str):
-    getemail = email
+async def process_order(id):
+
     getprod = Orders.objects.get(id=ObjectId(id))
     getprod.update(
         delivered=True
     )
+    getemail = getprod["CustomerEmail"]
+    getname = getprod["CustomerName"]
 
-    fm = FastMail(conf)
-    await fm.send_message(message, template_name='email.html')
+    #fm = FastMail(conf)
+    await emailhandler.ordermail(getemail, getname)
+    #await fm.send_message(message, template_name='email.html')
 
     return {"message": "customer notified..."}

@@ -19,12 +19,10 @@ import validators
 from config.auth import AuthHandler
 load_dotenv()
 
-#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
+
 aff = APIRouter()
 auth_handler = AuthHandler()
-#passContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
-#token_secret = os.getenv("JWT_aff_KEY")
-#token_algorithm = "HS256"
+
 
 
 class Newaccount(BaseModel):

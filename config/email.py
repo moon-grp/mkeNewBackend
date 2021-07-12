@@ -1,3 +1,4 @@
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 import os
 import smtplib
 from dotenv import load_dotenv
@@ -8,20 +9,26 @@ emailAddress = os.getenv("BASE_EMAIL")
 emailPassword = os.getenv("BASE_P")
 
 
-class Sendmail():
+class Mail():
+    conf = ConnectionConfig(
+        MAIL_USERNAME=emailAddress,
+        MAIL_PASSWORD=emailPassword,
+        MAIL_PORT=587,
+        MAIL_SERVER="smtp.gmail.com",
+        MAIL_TLS=True,
+        MAIL_SSL=False,
+        MAIL_FROM=emailAddress,
+        MAIL_FROM_NAME="Mr kay enterprise",
+        TEMPLATE_FOLDER='./templates'
+    )
 
-    def processMail(self, email):
-        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-            smtp.connect()
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.login(emailAddress, emailPassword)
+    fm = FastMail(conf)
 
-        subject = "Order Processing"
-        body = f"Hi, your order is processing. you should recieve it in 2-3 days."
-
-        msg = f'subject:  {subject}\n\n{body}'
-
-        # smtp.sendmail(emailAddress, "gogechi8@gmail.com", msg)
-        # smtp.sendmail(emailAddress, cEmail, msg)
-        smtp.sendmail(emailAddress, email, msg)
+    async def ordermail(self, mail , name):
+        message = MessageSchema(
+            subject="Frame Order",
+            recipients=[mail],
+            body=f"Hi {name}, your order is processing. you should recieve it in 2-3 days.",
+            subtype="html"
+        )
+        await self.fm.send_message(message, template_name='email.html')
