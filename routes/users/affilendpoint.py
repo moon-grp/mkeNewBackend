@@ -37,7 +37,7 @@ class logIn(BaseModel):
 
 
 @aff.post("/signup", tags=["users-affill"])
-async def create_account(details: Newaccount, token: str = Depends(auth_handler.auth_wrapper)):
+async def create_account(details: Newaccount):
     if validators.email(details.email) != True:
         raise HTTPException(status_code=400, detail="email not valid..")
 
