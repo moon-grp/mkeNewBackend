@@ -80,7 +80,7 @@ async def aff_view_details(id, token: str = Depends(auth_handler.auth_wrapper)):
     try:
         checkE = json.loads(Affil.objects.get(email=token).to_json())
         username = checkE["username"]
-        querylink = f"http://localhost:3000/autos/affiliates/garage/{ObjectId(id)}?ref={username}"
+        querylink = f"http://localhost:3000/garage/{ObjectId(id)}?ref={username}"
         getCar = Cars.objects.get(id=ObjectId(id))
         carDetails = {
             "carname": getCar.carname,
