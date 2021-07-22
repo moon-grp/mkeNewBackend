@@ -41,3 +41,12 @@ class Mail():
             subtype="html"
         )
         await self.fm.send_message(message, template_name='email.html')
+
+    async def affilatenotification (self, mail ,name ,carname, date, num):
+        message = MessageSchema(
+            subject="Booking inspection notification",
+            recipients=[mail],
+            body=f"Hi, {name}, your link was used to book inspection of {carname} on ({date}). \nYou can call {num} to follow up on the deal. \nKind Regards.",
+            subtype="html"
+        )
+        await self.fm.send_message(message, template_name='email.html')
