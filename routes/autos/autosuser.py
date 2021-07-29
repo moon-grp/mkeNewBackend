@@ -80,6 +80,10 @@ async def booking(details: Bookit):
 
         addBooking.save()
 
+        await emailhandler.affilatenotificationAdmin(details.name, details.carName, details.date, details.phone)
+
+        await emailhandler.affilatenotificationUser(details.email, details.name, details.carName, details.date)
+
         return{"message": "Date booked..."}
     else:
         try:
@@ -99,6 +103,10 @@ async def booking(details: Bookit):
 
             addBooking.save()
             await emailhandler.affilatenotification(email, details.ref, details.carName, details.date, details.phone)
+
+            await emailhandler.affilatenotificationAdmin(details.name, details.carName, details.date, details.phone)
+
+            await emailhandler.affilatenotificationUser(details.email, details.name, details.carName, details.date)
 
             return{"message": "Date booked..."}
         except:

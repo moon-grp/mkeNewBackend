@@ -50,3 +50,21 @@ class Mail():
             subtype="html"
         )
         await self.fm.send_message(message, template_name='email.html')
+
+    async def affilatenotificationAdmin (self,name ,carname, date, num):
+        message = MessageSchema(
+            subject="Booking inspection notification",
+            recipients=["mrkayenterprise@gmail.com"],
+            body=f"Inspection of {carname} on ({date}) by {name}. \nPhone number:{num}.",
+            subtype="html"
+        )
+        await self.fm.send_message(message, template_name='email.html')
+
+    async def affilatenotificationUser (self, mail ,name ,carname, date):
+        message = MessageSchema(
+            subject="Booking inspection notification",
+            recipients=[mail],
+            body=f"Hi, {name}, you booked inspection of {carname} on ({date}). \nWe would call you shortly to follow up on details. \nKind Regards.",
+            subtype="html"
+        )
+        await self.fm.send_message(message, template_name='email.html')
