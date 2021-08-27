@@ -54,6 +54,11 @@ async def get_car(id):
         "description": getCar.description,
         "location": getCar.location,
         "mediaUrl": getCar.mediaUrl,
+        "mileage": getCar.milage,
+        "year": getCar.year,
+        "transmission": getCar.transmission,
+        "color": getCar.color,
+        "condition": getCar.condition
     }
     return carDetails
 

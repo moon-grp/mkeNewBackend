@@ -40,11 +40,7 @@ async def view_car_details(id, token: str = Depends(auth_handler.auth_wrapper)):
         "available": getCar.available,
         "mediaUrl": getCar.mediaUrl,
         "commission": getCar.commission,
-        "mileage": getCar.milage,
-        "year": getCar.year,
-        "transmission": getCar.transmission,
-        "color": getCar.color,
-        "condition": getCar.condition
+        
     }
     return carDetails
 
