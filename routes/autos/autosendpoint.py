@@ -58,6 +58,11 @@ async def create_post(
     description: str = Form(...),
     commission: str = Form(...),
     location: str = Form(...),
+    mileage: str = Form(...),
+    year: str= Form(...),
+    transmission: str = Form(...),
+    color: str= Form(...),
+    condition: str = Form(...),
 
     file: UploadFile = File(...),
     file2: UploadFile = File(...),
@@ -85,7 +90,12 @@ async def create_post(
         carprice=carprice,
         description=description,
         commission=commission,
-        location=location
+        location=location,
+        mileage=mileage,
+        year=year,
+        transmission=transmission,
+        color=color,
+        condition=condition
     )
 
     new_prod.save()
