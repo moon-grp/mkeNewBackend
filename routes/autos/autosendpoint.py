@@ -39,7 +39,12 @@ async def view_car_details(id, token: str = Depends(auth_handler.auth_wrapper)):
         "location": getCar.location,
         "available": getCar.available,
         "mediaUrl": getCar.mediaUrl,
-        "commission": getCar.commission
+        "commission": getCar.commission,
+        "mileage": getCar.milage,
+        "year": getCar.year,
+        "transmission": getCar.transmission,
+        "color": getCar.color,
+        "condition": getCar.condition
     }
     return carDetails
 
@@ -59,9 +64,9 @@ async def create_post(
     commission: str = Form(...),
     location: str = Form(...),
     mileage: str = Form(...),
-    year: str= Form(...),
+    year: str = Form(...),
     transmission: str = Form(...),
-    color: str= Form(...),
+    color: str = Form(...),
     condition: str = Form(...),
 
     file: UploadFile = File(...),
