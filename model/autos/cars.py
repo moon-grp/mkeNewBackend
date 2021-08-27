@@ -17,6 +17,9 @@ class Cars(Document):
     description = StringField()
     commission = DecimalField()
     mediaUrl = URLField()
+    mediaUrl2 = URLField()
+    mediaUrl3 = URLField()
+    mediaUrl4 = URLField()
     slug = StringField()
     location = StringField()
     

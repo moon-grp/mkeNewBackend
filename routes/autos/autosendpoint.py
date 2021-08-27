@@ -60,14 +60,26 @@ async def create_post(
     location: str = Form(...),
 
     file: UploadFile = File(...),
+    file2: UploadFile = File(...),
+    file3: UploadFile = File(...),
+    file4: UploadFile = File(...),
     token: str = Depends(auth_handler.auth_wrapper)
 
 ):
     uploadToCloud = uploadit.upload(file.file, )
     getImageUrl = uploadToCloud["url"]
+    uploadToCloud2 = uploadit.upload(file2.file, )
+    getImageUrl2 = uploadToCloud2["url"]
+    uploadToCloud3 = uploadit.upload(file3.file, )
+    getImageUrl3 = uploadToCloud3["url"]
+    uploadToCloud4 = uploadit.upload(file4.file, )
+    getImageUrl4 = uploadToCloud4["url"]
 
     new_prod = Cars(
         mediaUrl=getImageUrl,
+        mediaUrl2=getImageUrl2,
+        mediaUrl3=getImageUrl3,
+        mediaUrl4=getImageUrl4,
         available=True,
         carname=carname,
         carprice=carprice,
